@@ -2,198 +2,742 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analizador VAK Mejorado con TextRazor</title>
-    <style>
-        /* (Tu CSS existente permanece igual) */
-        /* ... (CSS omitido para brevedad) ... */
-    </style>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Analizador VAK Mejorado con TextRazor</title>
+	<style>
+		/* Variables de color */
+		:root {
+			--visual-color: #0040ff;
+			/* Azul */
+			--auditory-color: #a10303;
+			/* Rojo */
+			--kinesthetic-color: #017564;
+			/* Verde */
+			--auditory-digital-color: #ff8c00;
+			/* Naranja */
+			--entity-color: #8e44ad;
+			/* Morado */
+			--neutral-color: #2c3e50;
+			/* Color neutro */
+			--bg-color: #f4f4f4;
+			--text-color: #2c3e50;
+			--header-bg: #ffffff;
+			--card-bg: #fff;
+			--tooltip-bg: rgba(0, 0, 0, 0.8);
+			--tooltip-text: #fff;
+			--button-hover: #8e44ad;
+			--modal-bg: rgba(0, 0, 0, 0.5);
+			--focus-outline: #3498db;
+			--transition-speed: 0.3s;
+			--title-font-size: 2.5em;
+			--title-font-family: 'Verdana', sans-serif;
+			--title-letter-spacing: 2px;
+			--accordion-bg: #f9f9f9;
+		}
+
+		.dark-mode {
+			--bg-color: #2c3e50;
+			--text-color: #ecf0f1;
+			--header-bg: #34495e;
+			--card-bg: #2c3e50;
+			--tooltip-bg: rgba(255, 255, 255, 0.9);
+			--tooltip-text: #2c3e50;
+			--button-hover: #5e2a7f;
+			--accordion-bg: #34495e;
+		}
+
+		body {
+			font-family: 'Verdana', sans-serif;
+			line-height: 1.6;
+			color: var(--text-color);
+			margin: 0;
+			padding: 0;
+			background-color: var(--bg-color);
+			transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+		}
+
+		.container {
+			max-width: 1400px;
+			margin: 0 auto;
+			background-color: var(--card-bg);
+			border-radius: 10px;
+			box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+			overflow: hidden;
+			padding: 20px;
+			transition: background-color var(--transition-speed) ease;
+		}
+
+		header {
+			background-color: var(--header-bg);
+			padding: 20px;
+			text-align: center;
+			border-radius: 10px 10px 0 0;
+			transition: background-color var(--transition-speed) ease;
+			position: relative;
+			border: 2px solid #000;
+		}
+
+		h1 {
+			color: var(--text-color);
+			margin: 0;
+			font-family: var(--title-font-family);
+			font-size: var(--title-font-size);
+			font-weight: bold;
+			text-transform: uppercase;
+			letter-spacing: var(--title-letter-spacing);
+			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+			transition: color var(--transition-speed) ease;
+		}
+
+		nav {
+			display: flex;
+			justify-content: center;
+			background-color: var(--header-bg);
+			padding: 10px;
+			gap: 10px;
+			flex-wrap: wrap;
+			transition: background-color var(--transition-speed) ease;
+		}
+
+		nav button {
+			padding: 10px 15px;
+			border: none;
+			border-radius: 5px;
+			background-color: var(--neutral-color);
+			color: white;
+			cursor: pointer;
+			transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+			min-width: 44px;
+			min-height: 44px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 16px;
+		}
+
+		nav button:hover {
+			background-color: var(--button-hover);
+			transform: scale(1.05);
+		}
+
+		nav button:focus {
+			outline: 2px solid var(--focus-outline);
+			outline-offset: 2px;
+		}
+
+		main {
+			display: flex;
+			flex-direction: column;
+			padding: 20px;
+			gap: 20px;
+		}
+
+		.text-input-section,
+		.analysis-section {
+			background-color: var(--card-bg);
+			border-radius: 8px;
+			padding: 20px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
+		}
+
+		.text-input-section h2,
+		.analysis-section h2 {
+			font-size: 1.8em;
+			margin-bottom: 15px;
+			text-align: center;
+			color: var(--text-color);
+		}
+
+		.textarea-container {
+			width: 100%;
+			margin-bottom: 20px;
+		}
+
+		.textarea-container textarea {
+			width: 100%;
+			height: 200px;
+			padding: 10px;
+			border-radius: 5px;
+			border: 1px solid #ddd;
+			font-size: 16px;
+			resize: vertical;
+			font-family: 'Verdana', sans-serif;
+			transition: border-color var(--transition-speed) ease;
+			background-color: var(--bg-color);
+			color: var(--text-color);
+		}
+
+		.textarea-container textarea:hover,
+		.textarea-container textarea:focus {
+			border-color: var(--neutral-color);
+			outline: none;
+		}
+
+		.analyze-button,
+		.btn-export {
+			display: block;
+			width: 100%;
+			padding: 10px;
+			margin-top: 10px;
+			border: none;
+			border-radius: 5px;
+			background-color: var(--neutral-color);
+			color: white;
+			font-size: 16px;
+			cursor: pointer;
+			transition: background-color var(--transition-speed) ease, transform 0.2s ease;
+		}
+
+		.analyze-button:hover,
+		.btn-export:hover {
+			background-color: var(--button-hover);
+			transform: scale(1.02);
+		}
+
+		.analyze-button:focus,
+		.btn-export:focus {
+			outline: 2px solid var(--focus-outline);
+			outline-offset: 2px;
+		}
+
+		.analysis-result {
+			margin-top: 20px;
+			padding: 15px;
+			border-radius: 5px;
+			background-color: var(--bg-color);
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+		}
+
+		.highlight {
+			font-weight: bold;
+			padding: 2px 4px;
+			border-radius: 3px;
+			position: relative;
+			cursor: pointer;
+		}
+
+		.visual-word {
+			background-color: var(--visual-color);
+			color: white;
+		}
+
+		.auditory-word {
+			background-color: var(--auditory-color);
+			color: white;
+		}
+
+		.kinesthetic-word {
+			background-color: var(--kinesthetic-color);
+			color: white;
+		}
+
+		.auditory-digital-word {
+			background-color: var(--auditory-digital-color);
+			color: white;
+		}
+
+		.entity-word {
+			background-color: var(--entity-color);
+			color: white;
+		}
+
+		.stats-section {
+			display: flex;
+			justify-content: space-around;
+			margin-top: 20px;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+
+		.stat-item {
+			text-align: center;
+			padding: 10px;
+			background-color: var(--card-bg);
+			border-radius: 5px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			flex: 1 1 150px;
+		}
+
+		.sequence-analysis,
+		.entity-analysis,
+		.vak-words-section,
+		.chart-container {
+			margin-top: 20px;
+			padding: 15px;
+			background-color: var(--bg-color);
+			border-radius: 5px;
+		}
+
+		/* Modal Styles */
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1000;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			overflow: auto;
+			background-color: var(--modal-bg);
+			transition: opacity var(--transition-speed) ease;
+		}
+
+		.modal-content {
+			background-color: var(--card-bg);
+			margin: 10% auto;
+			padding: 20px;
+			border: 1px solid #888;
+			width: 90%;
+			max-width: 500px;
+			border-radius: 10px;
+			position: relative;
+			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+			animation: fadeIn var(--transition-speed) ease;
+			transition: background-color var(--transition-speed) ease;
+			font-family: 'Verdana', sans-serif;
+		}
+
+		.close {
+			color: #aaa;
+			position: absolute;
+			top: 10px;
+			right: 20px;
+			font-size: 28px;
+			font-weight: bold;
+			cursor: pointer;
+			transition: color var(--transition-speed) ease;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: black;
+			text-decoration: none;
+			cursor: pointer;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(-20px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		/* Tooltip Styles */
+		.highlight[data-tooltip]::after {
+			content: attr(data-tooltip);
+			position: absolute;
+			bottom: 125%;
+			left: 50%;
+			transform: translateX(-50%);
+			background-color: var(--tooltip-bg);
+			color: var(--tooltip-text);
+			padding: 5px;
+			border-radius: 6px;
+			white-space: nowrap;
+			opacity: 0;
+			transition: opacity var(--transition-speed) ease;
+			pointer-events: none;
+			z-index: 1001;
+		}
+
+		.highlight[data-tooltip]::before {
+			content: "";
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			margin-left: -5px;
+			border-width: 5px;
+			border-style: solid;
+			border-color: var(--tooltip-bg) transparent transparent transparent;
+			opacity: 0;
+			transition: opacity var(--transition-speed) ease;
+			pointer-events: none;
+			z-index: 1001;
+		}
+
+		.highlight[data-tooltip]:hover::after,
+		.highlight[data-tooltip]:hover::before {
+			opacity: 1;
+		}
+
+		/* Optimización Responsive */
+		@media (max-width: 768px) {
+			.container {
+				padding: 10px;
+			}
+
+			h1 {
+				font-size: 1.8em;
+			}
+
+			.text-input-section textarea {
+				height: 150px;
+			}
+
+			.stats-section {
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.stat-item {
+				width: 100%;
+				margin-bottom: 10px;
+			}
+
+			.analyze-button,
+			.btn-export {
+				width: 100%;
+			}
+
+			.modal-content {
+				margin: 20% auto;
+			}
+		}
+
+		/* Semántica y Accesibilidad */
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+	</style>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>Analizador VAK Mejorado con TextRazor</h1>
-        </header>
-        <nav>
-            <button id="toggle-theme" aria-label="Alternar modo oscuro">🌙 Modo Oscuro</button>
-            <button id="show-info" aria-label="Mostrar información">ℹ️ Información</button>
-            <button id="show-stats" aria-label="Mostrar estadísticas">📊 Estadísticas</button>
-        </nav>
-        <main>
-            <section class="text-input-section">
-                <h2>Ingrese su texto para analizar</h2>
-                <div class="textarea-container">
-                    <label for="text-input" class="sr-only">Ingresa tu texto aquí</label>
-                    <textarea id="text-input" placeholder="Escriba o pegue su texto aquí..." aria-label="Área de texto para ingresar el discurso"></textarea>
-                </div>
-                <button id="analyze-btn" class="analyze-button" aria-label="Analizar texto">Analizar Texto</button>
-            </section>
-            <section class="analysis-section">
-                <h2>Resultado del Análisis</h2>
-                <div id="analysis-result" class="analysis-result">
-                    El texto analizado aparecerá aquí...
-                </div>
-                <div class="stats-section">
-                    <div class="stat-item">
-                        <h3>Visual</h3>
-                        <p id="visual-count">0</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3>Auditivo</h3>
-                        <p id="auditory-count">0</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3>Kinestésico</h3>
-                        <p id="kinesthetic-count">0</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3>Auditivo Digital</h3>
-                        <p id="auditory-digital-count">0</p>
-                    </div>
-                </div>
-                <div class="sequence-analysis">
-                    <h3>Análisis de Secuencia</h3>
-                    <p id="sequence-result">La secuencia predominante aparecerá aquí...</p>
-                </div>
-                <div class="vak-words-section">
-                    <!-- Las listas de palabras VAK aparecerán aquí -->
-                </div>
-                <div class="entity-analysis">
-                    <h3>Entidades Nombradas</h3>
-                    <p id="entity-result">Las entidades identificadas aparecerán aquí...</p>
-                </div>
-                <div class="chart-container">
-                    <canvas id="vakChart" width="400" height="200"></canvas>
-                </div>
-            </section>
-            <button class="btn-export" id="export-results" aria-label="Exportar resultados">Exportar Resultados</button>
-        </main>
-    </div>
+	<div class="container">
+		<header>
+			<h1>Analizador VAK Mejorado con TextRazor</h1>
+		</header>
+		<nav>
+			<button id="toggle-theme" aria-label="Alternar modo oscuro">🌙 Modo Oscuro</button>
+			<button id="show-info" aria-label="Mostrar información">ℹ️ Información</button>
+			<button id="show-stats" aria-label="Mostrar estadísticas">📊 Estadísticas</button>
+		</nav>
+		<main>
+			<section class="text-input-section">
+				<h2>Ingrese su texto para analizar</h2>
+				<div class="textarea-container">
+					<label for="text-input" class="sr-only">Ingresa tu texto aquí</label>
+					<textarea id="text-input" placeholder="Escriba o pegue su texto aquí..." aria-label="Área de texto para ingresar el discurso"></textarea>
+				</div>
+				<button id="analyze-btn" class="analyze-button" aria-label="Analizar texto">Analizar Texto</button>
+			</section>
+			<section class="analysis-section">
+				<h2>Resultado del Análisis</h2>
+				<div id="analysis-result" class="analysis-result">
+					El texto analizado aparecerá aquí...
+				</div>
+				<div class="stats-section">
+					<div class="stat-item">
+						<h3>Visual</h3>
+						<p id="visual-count">0</p>
+					</div>
+					<div class="stat-item">
+						<h3>Auditivo</h3>
+						<p id="auditory-count">0</p>
+					</div>
+					<div class="stat-item">
+						<h3>Kinestésico</h3>
+						<p id="kinesthetic-count">0</p>
+					</div>
+					<div class="stat-item">
+						<h3>Auditivo Digital</h3>
+						<p id="auditory-digital-count">0</p>
+					</div>
+				</div>
+				<div class="sequence-analysis">
+					<h3>Análisis de Secuencia</h3>
+					<p id="sequence-result">La secuencia predominante aparecerá aquí...</p>
+				</div>
+				<div class="vak-words-section">
+					<!-- Las listas de palabras VAK aparecerán aquí -->
+				</div>
+				<div class="entity-analysis">
+					<h3>Entidades Nombradas</h3>
+					<p id="entity-result">Las entidades identificadas aparecerán aquí...</p>
+				</div>
+				<div class="chart-container">
+					<canvas id="vakChart" width="400" height="200"></canvas>
+				</div>
+			</section>
+			<button class="btn-export" id="export-results" aria-label="Exportar resultados">Exportar Resultados</button>
+		</main>
+	</div>
 
-    <!-- Modal de Estadísticas -->
-    <div id="stats-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="stats-title" aria-modal="true">
-        <div class="modal-content">
-            <span class="close" aria-label="Cerrar">&times;</span>
-            <div class="stats-content" id="stats-content">
-                <h2 id="stats-title">📊 Estadísticas de Usuario</h2>
-                <p>Textos Analizados: <span id="texts-analyzed">0</span></p>
-                <p>Palabras Visuales: <span id="visual-count-modal">0</span></p>
-                <p>Palabras Auditivas: <span id="auditory-count-modal">0</span></p>
-                <p>Palabras Kinestésicas: <span id="kinesthetic-count-modal">0</span></p>
-                <p>Palabras Auditivo Digital: <span id="auditory-digital-count-modal">0</span></p>
-            </div>
-        </div>
-    </div>
+	<!-- Modal de Estadísticas -->
+	<div id="stats-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="stats-title"
+		aria-modal="true">
+		<div class="modal-content">
+			<span class="close" aria-label="Cerrar">&times;</span>
+			<div class="stats-content" id="stats-content">
+				<h2 id="stats-title">📊 Estadísticas de Usuario</h2>
+				<p>Textos Analizados: <span id="texts-analyzed">0</span></p>
+				<p>Palabras Visuales: <span id="visual-count-modal">0</span></p>
+				<p>Palabras Auditivas: <span id="auditory-count-modal">0</span></p>
+				<p>Palabras Kinestésicas: <span id="kinesthetic-count-modal">0</span></p>
+				<p>Palabras Auditivo Digital: <span id="auditory-digital-count-modal">0</span></p>
+			</div>
+		</div>
+	</div>
 
-    <!-- Modal Informativo -->
-    <div id="info-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="info-title" aria-modal="true">
-        <div class="modal-content">
-            <span class="close" aria-label="Cerrar">&times;</span>
-            <h2 id="info-title">ℹ️ Información sobre el Analizador VAK Mejorado</h2>
-            <p>El Analizador VAK es una herramienta diseñada para identificar elementos sensoriales en textos, basándose
-                en el modelo de Programación Neurolingüística (PNL) que clasifica la percepción en cuatro sistemas
-                principales: Visual, Auditivo, Kinestésico y Auditivo Digital.</p>
-            <h3>Cómo funciona:</h3>
-            <ul>
-                <li><strong>Visual:</strong> Identifica palabras relacionadas con la vista y las imágenes mentales.</li>
-                <li><strong>Auditivo:</strong> Detecta términos asociados con el sonido y la escucha.</li>
-                <li><strong>Kinestésico:</strong> Reconoce palabras vinculadas a sensaciones y emociones.</li>
-                <li><strong>Auditivo Digital:</strong> Detecta términos relacionados con el pensamiento lógico y analítico.</li>
-            </ul>
-            <p>Además, utilizando la API de TextRazor, el analizador identifica entidades nombradas y relaciones
-                semánticas para enriquecer el análisis y proporcionar una comprensión más profunda del texto.</p>
-        </div>
-    </div>
+	<!-- Modal Informativo -->
+	<div id="info-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="info-title" aria-modal="true">
+		<div class="modal-content">
+			<span class="close" aria-label="Cerrar">&times;</span>
+			<h2 id="info-title">ℹ️ Información sobre el Analizador VAK Mejorado</h2>
+			<p>El Analizador VAK es una herramienta diseñada para identificar elementos sensoriales en textos, basándose
+				en el modelo de Programación Neurolingüística (PNL) que clasifica la percepción en cuatro sistemas
+				principales: Visual, Auditivo, Kinestésico y Auditivo Digital.</p>
+			<h3>Cómo funciona:</h3>
+			<ul>
+				<li><strong>Visual:</strong> Identifica palabras relacionadas con la vista y las imágenes mentales.</li>
+				<li><strong>Auditivo:</strong> Detecta términos asociados con el sonido y la escucha.</li>
+				<li><strong>Kinestésico:</strong> Reconoce palabras vinculadas a sensaciones y emociones.</li>
+				<li><strong>Auditivo Digital:</strong> Detecta términos relacionados con el pensamiento lógico y
+					analítico.</li>
+			</ul>
+			<p>Además, utilizando la API de TextRazor, el analizador identifica entidades nombradas y relaciones
+				semánticas para enriquecer el análisis y proporcionar una comprensión más profunda del texto.</p>
+		</div>
+	</div>
 
-    <!-- Incluimos la biblioteca Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<!-- Incluimos la biblioteca Chart.js -->
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        // Función para escapar caracteres especiales en expresiones regulares
+	<script>
+		// Función para escapar caracteres especiales en expresiones regulares
         function escapeRegExp(string) {
             return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
-        // Listas de palabras VAK usando raíces y patrones
-        const visualPatterns = [
-            /\b(visual\w*)\b/gi,
-            /\b(clar\w*)\b/gi,
-            /\b(vid\w*)\b/gi,
-            /\b(mir\w*)\b/gi,
-            /\b(observ\w*)\b/gi,
-            /\b(enfoc\w*)\b/gi,
-            /\b(perspect\w*)\b/gi,
-            /\b(imagen\w*)\b/gi,
-            /\b(color\w*)\b/gi,
-            /\b(aparienc\w*)\b/gi,
-            /\b(sombr\w*)\b/gi,
-            /\b(visualizar\w*)\b/gi,
-            /\b(ilumin\w*)\b/gi,
-            /\b(visión)\b/gi,
-            /\b(ver)\b/gi,
-            /\b(visto)\b/gi,
-            /\b(veo)\b/gi
-        ];
-
-        const auditoryPatterns = [
-            /\b(audit\w*)\b/gi,
-            /\b(sonid\w*)\b/gi,
-            /\b(escuch\w*)\b/gi,
-            /\b(o[i|í|y]r\w*)\b/gi,
-            /\b(habl\w*)\b/gi,
-            /\b(sonar\w*)\b/gi,
-            /\b(reson\w*)\b/gi,
-            /\b(ruido\w*)\b/gi,
-            /\b(silenci\w*)\b/gi,
-            /\b(susurr\w*)\b/gi,
-            /\b(melod\w*)\b/gi,
-            /\b(cantar\w*)\b/gi,
-            /\b(grit\w*)\b/gi,
-            /\b(decir\w*)\b/gi,
-            /\b(escucho)\b/gi
-        ];
-
-        const kinestheticPatterns = [
-            /\b(sent\w*)\b/gi,
-            /\b(tocar\w*)\b/gi,
-            /\b(sensac\w*)\b/gi,
-            /\b(mov\w*)\b/gi,
-            /\b(camin\w*)\b/gi,
-            /\b(correr\w*)\b/gi,
-            /\b(calor\w*)\b/gi,
-            /\b(fr[i|í]o\w*)\b/gi,
-            /\b(presi[ó|o]n\w*)\b/gi,
-            /\b(fuerz\w*)\b/gi,
-            /\b(sostener\w*)\b/gi,
-            /\b(tens[ó|o]n\w*)\b/gi,
-            /\b(agarra\w*)\b/gi,
-            /\b(golpe\w*)\b/gi,
-            /\b(palpit\w*)\b/gi,
-            /\b(siento)\b/gi
-        ];
-
-        const auditoryDigitalPatterns = [
-            /\b(pens\w*)\b/gi,
-            /\b(concept\w*)\b/gi,
-            /\b(entend\w*)\b/gi,
-            /\b(comprend\w*)\b/gi,
-            /\b(conoc\w*)\b/gi,
-            /\b(lógic\w*)\b/gi,
-            /\b(analiz\w*)\b/gi,
-            /\b(proces\w*)\b/gi,
-            /\b(sistem\w*)\b/gi,
-            /\b(calcul\w*)\b/gi,
-            /\b(estudi\w*)\b/gi,
-            /\b(cuestion\w*)\b/gi,
-            /\b(inform\w*)\b/gi,
-            /\b(decid\w*)\b/gi,
-            /\b(plane\w*)\b/gi,
-            /\b(razon\w*)\b/gi,
-            /\b(ideas?)\b/gi,
-            /\b(pensamiento)\b/gi
-        ];
+        // *** Las siguientes líneas deben ser definidas en otro archivo y copiadas aquí ***
+		const visualPatterns = [
+		/\b(visual\w*)\b/gi,
+		/\b(clar\w*)\b/gi,
+		/\b(vid\w*)\b/gi,
+		/\b(mir\w*)\b/gi,
+		/\b(observ\w*)\b/gi,
+		/\b(enfoc\w*)\b/gi,
+		/\b(perspect\w*)\b/gi,
+		/\b(imagen\w*)\b/gi,
+		/\b(color\w*)\b/gi,
+		/\b(aparienc\w*)\b/gi,
+		/\b(sombr\w*)\b/gi,
+		/\b(visualizar\w*)\b/gi,
+		/\b(ilumin\w*)\b/gi,
+		/\b(visión)\b/gi,
+		/\b(ver)\b/gi,
+		/\b(visto)\b/gi,
+		/\b(veo)\b/gi,
+		/\b(distinguir\w*)\b/gi,
+		/\b(vislumbr\w*)\b/gi,
+		/\b(espej\w*)\b/gi,
+		/\b(claridad)\b/gi,
+		/\b(captar)\b/gi,
+		/\b(retina\w*)\b/gi,
+		/\b(percept\w*)\b/gi,
+		/\b(nítido\w*)\b/gi,
+		/\b(fantasma\w*)\b/gi,
+		/\b(enmarcar\w*)\b/gi,
+		/\b(destacar\w*)\b/gi,
+		/\b(aparición\w*)\b/gi,
+		/\b(panorama\w*)\b/gi,
+		/\b(visibilidad)\b/gi,
+		/\b(paleta)\b/gi,
+		/\b(transparente\w*)\b/gi,
+		/\b(caleidoscopio)\b/gi,
+		/\b(brill\w*)\b/gi,
+		/\b(visualización\w*)\b/gi,
+		/\b(reflejar\w*)\b/gi,
+		/\b(proyección)\b/gi,
+		/\b(exhibir)\b/gi,
+		/\b(deslumbre)\b/gi,
+		/\b(difuminar)\b/gi,
+		/\b(fundirse)\b/gi,
+		/\b(prismático)\b/gi,
+		/\b(cinematográfico)\b/gi,
+		/\b(enfoque)\b/gi,
+		/\b(captura\w*)\b/gi,
+		/\b(óptico)\b/gi,
+		/\b(luz)\b/gi,
+		/\b(sombra)\b/gi,
+		/\b(colores?)\b/gi,
+		/\b(cuadro)\b/gi
+		];
+		
+		const auditoryPatterns = [
+		/\b(audit\w*)\b/gi,
+		/\b(sonid\w*)\b/gi,
+		/\b(escuch\w*)\b/gi,
+		/\b(o[i|í|y]r\w*)\b/gi,
+		/\b(habl\w*)\b/gi,
+		/\b(sonar\w*)\b/gi,
+		/\b(reson\w*)\b/gi,
+		/\b(ruido\w*)\b/gi,
+		/\b(silenci\w*)\b/gi,
+		/\b(susurr\w*)\b/gi,
+		/\b(melod\w*)\b/gi,
+		/\b(cantar\w*)\b/gi,
+		/\b(grit\w*)\b/gi,
+		/\b(decir\w*)\b/gi,
+		/\b(escucho)\b/gi,
+		/\b(discurs\w*)\b/gi,
+		/\b(alboroto\w*)\b/gi,
+		/\b(exclam\w*)\b/gi,
+		/\b(voz)\b/gi,
+		/\b(dialo\w*)\b/gi,
+		/\b(rugido)\b/gi,
+		/\b(zumbido)\b/gi,
+		/\b(eco)\b/gi,
+		/\b(rumor)\b/gi,
+		/\b(chirrido\w*)\b/gi,
+		/\b(resonar)\b/gi,
+		/\b(repique\w*)\b/gi,
+		/\b(armonía)\b/gi,
+		/\b(repetir)\b/gi,
+		/\b(conversar\w*)\b/gi,
+		/\b(murmullo)\b/gi,
+		/\b(fonema)\b/gi,
+		/\b(susurro)\b/gi,
+		/\b(estallido)\b/gi,
+		/\b(bisbisear)\b/gi,
+		/\b(cacofonía)\b/gi,
+		/\b(ritmo)\b/gi,
+		/\b(entonación)\b/gi,
+		/\b(palpitar)\b/gi,
+		/\b(claquetazo)\b/gi,
+		/\b(gruñido)\b/gi,
+		/\b(reverberar)\b/gi,
+		/\b(batir)\b/gi,
+		/\b(tronido)\b/gi,
+		/\b(cuchicheo)\b/gi,
+		/\b(timbre)\b/gi,
+		/\b(tronar)\b/gi,
+		/\b(cloqueo)\b/gi,
+		/\b(implosión)\b/gi,
+		/\b(aplaudir)\b/gi,
+		/\b(sonido\w*)\b/gi
+		];
+		
+		const kinestheticPatterns = [
+		/\b(sent\w*)\b/gi,
+		/\b(tocar\w*)\b/gi,
+		/\b(sensac\w*)\b/gi,
+		/\b(mov\w*)\b/gi,
+		/\b(camin\w*)\b/gi,
+		/\b(correr\w*)\b/gi,
+		/\b(calor\w*)\b/gi,
+		/\b(fr[i|í]o\w*)\b/gi,
+		/\b(presi[ó|o]n\w*)\b/gi,
+		/\b(fuerz\w*)\b/gi,
+		/\b(sostener\w*)\b/gi,
+		/\b(tens[ó|o]n\w*)\b/gi,
+		/\b(agarra\w*)\b/gi,
+		/\b(golpe\w*)\b/gi,
+		/\b(palpit\w*)\b/gi,
+		/\b(siento)\b/gi,
+		/\b(apretar)\b/gi,
+		/\b(manzana)\b/gi,
+		/\b(saltar)\b/gi,
+		/\b(temblar)\b/gi,
+		/\b(flexionar)\b/gi,
+		/\b(frotar)\b/gi,
+		/\b(aferrar)\b/gi,
+		/\b(aliviar)\b/gi,
+		/\b(empujar)\b/gi,
+		/\b(estirar)\b/gi,
+		/\b(levantar)\b/gi,
+		/\b(tacto)\b/gi,
+		/\b(escalar)\b/gi,
+		/\b(carga)\b/gi,
+		/\b(sostenido)\b/gi,
+		/\b(relajar)\b/gi,
+		/\b(tensar)\b/gi,
+		/\b(pellizco)\b/gi,
+		/\b(quemar)\b/gi,
+		/\b(escalofrío)\b/gi,
+		/\b(sudor)\b/gi,
+		/\b(aflojar)\b/gi,
+		/\b(erizar)\b/gi,
+		/\b(torcer)\b/gi,
+		/\b(girar)\b/gi,
+		/\b(caer)\b/gi,
+		/\b(retorcer)\b/gi,
+		/\b(abrazar)\b/gi,
+		/\b(caminar)\b/gi,
+		/\b(rodar)\b/gi,
+		/\b(sacudir)\b/gi,
+		/\b(presión)\b/gi,
+		/\b(debilitar)\b/gi,
+		/\b(empapar)\b/gi
+		];
+    
+	const auditoryDigitalPatterns = [
+	/\b(pens\w*)\b/gi, // pensar, pensamiento
+	/\b(concept\w*)\b/gi, // concepto, conceptualizar
+	/\b(entend\w*)\b/gi, // entender, entendimiento
+	/\b(comprend\w*)\b/gi, // comprender, comprensión
+	/\b(conoc\w*)\b/gi, // conocer, conocimiento
+	/\b(lógic\w*)\b/gi, // lógica, lógico
+	/\b(analiz\w*)\b/gi, // analizar, análisis
+	/\b(proces\w*)\b/gi, // procesar, proceso
+	/\b(sistem\w*)\b/gi, // sistema, sistemático
+	/\b(calcul\w*)\b/gi, // calcular, cálculo
+	/\b(estudi\w*)\b/gi, // estudiar, estudio
+	/\b(cuestion\w*)\b/gi, // cuestionar, cuestión
+	/\b(inform\w*)\b/gi, // informar, información
+	/\b(decid\w*)\b/gi, // decidir, decisión
+	/\b(plane\w*)\b/gi, // planear, plan
+	/\b(razon\w*)\b/gi, // razonar, razonamiento
+	/\b(ideas?)\b/gi, // idea, ideas
+	/\b(pensamiento)\b/gi, // pensamiento
+	/\b(explic\w*)\b/gi, // explicar, explicación
+	/\b(deliberar)\b/gi, // deliberar
+	/\b(teoría)\b/gi, // teoría
+	/\b(estrateg\w*)\b/gi, // estrategia, estratégico
+	/\b(objetivo\w*)\b/gi, // objetivo, objetivamente
+	/\b(deducc\w*)\b/gi, // deducción, deducir
+	/\b(planear)\b/gi, // planear
+	/\b(intelectual\w*)\b/gi, // intelectual
+	/\b(memoria)\b/gi, // memoria
+	/\b(cognoscitiv\w*)\b/gi, // cognoscitivo
+	/\b(esquema)\b/gi, // esquema
+	/\b(calcular)\b/gi, // calcular
+	/\b(reflexionar)\b/gi, // reflexionar, reflexión
+	/\b(proyectar)\b/gi, // proyectar
+	/\b(hipótesis)\b/gi, // hipótesis
+	/\b(verificar)\b/gi, // verificar
+	/\b(formular)\b/gi, // formular
+	/\b(definir)\b/gi, // definir, definición
+	/\b(organizar)\b/gi, // organizar, organización
+	/\b(decodificar)\b/gi, // decodificar
+	/\b(elaborar)\b/gi, // elaborar
+	/\b(conceptualizar)\b/gi, // conceptualizar
+	/\b(determinar)\b/gi, // determinar
+	/\b(examinar)\b/gi, // examinar, examen
+	/\b(estudio)\b/gi, // estudio
+	/\b(pronosticar)\b/gi, // pronosticar, pronóstico
+	/\b(criterio)\b/gi, // criterio
+	/\b(sintetizar)\b/gi, // sintetizar
+	/\b(hipotético)\b/gi, // hipotético
+	/\b(anticipar)\b/gi, // anticipar, anticipación
+	/\b(teórico)\b/gi, // teórico
+	/\b(argumentar)\b/gi // argumentar, argumento
+	];
 
         // Variables de Usuario
         let userStats = {
@@ -532,7 +1076,7 @@
             showModal('info-modal');
         });
         document.getElementById('show-stats').addEventListener('click', showStats);
-    </script>
+	</script>
 </body>
 
 </html>
