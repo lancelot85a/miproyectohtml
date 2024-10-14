@@ -400,7 +400,7 @@
 			opacity: 1;
 		}
 
-		/* Optimizaci®Æn Responsive */
+		/* Optimizaci√≥n Responsive */
 		@media (max-width: 768px) {
 			.container {
 				padding: 10px;
@@ -434,7 +434,7 @@
 			}
 		}
 
-		/* Sem®¢ntica y Accesibilidad */
+		/* Sem√°ntica y Accesibilidad */
 		.sr-only {
 			position: absolute;
 			width: 1px;
@@ -463,7 +463,7 @@
 			/* Oculto por defecto */
 		}
 
-		/* Botones m®¢s profesionales */
+		/* Botones m√°s profesionales */
 		.analyze-button,
 		.btn-export {
 			background-color: var(--neutral-color);
@@ -504,28 +504,28 @@
 		</header>
 		<nav>
 			<button id="toggle-theme" aria-label="Alternar modo oscuro">
-                ?? Modo Oscuro
+                üåô Modo Oscuro
             </button>
-			<button id="show-info" aria-label="Mostrar informaci®Æn">
-                ?? Informaci®Æn
+			<button id="show-info" aria-label="Mostrar informaci√≥n">
+                ‚ÑπÔ∏è Informaci√≥n
             </button>
-			<button id="show-stats" aria-label="Mostrar estad®™sticas">
-                ?? Estad®™sticas
+			<button id="show-stats" aria-label="Mostrar estad√≠sticas">
+                üìä Estad√≠sticas
             </button>
 		</nav>
 		<main>
 			<section class="text-input-section">
 				<h2>Ingrese su texto para analizar</h2>
 				<div class="textarea-container">
-					<label for="text-input" class="sr-only">Ingresa tu texto aqu®™</label>
-					<textarea id="text-input" placeholder="Escriba o pegue su texto aqu®™..." aria-label="®¢rea de texto para ingresar el discurso"></textarea>
+					<label for="text-input" class="sr-only">Ingresa tu texto aqu√≠</label>
+					<textarea id="text-input" placeholder="Escriba o pegue su texto aqu√≠..." aria-label="√Årea de texto para ingresar el discurso"></textarea>
 				</div>
 				<button id="analyze-btn" class="analyze-button" aria-label="Analizar texto">Analizar Texto</button>
 			</section>
 			<section class="analysis-section">
-				<h2>Resultado del An®¢lisis</h2>
+				<h2>Resultado del An√°lisis</h2>
 				<div id="analysis-result" class="analysis-result" aria-live="polite">
-					El texto analizado aparecer®¢ aqu®™...
+					El texto analizado aparecer√° aqu√≠...
 				</div>
 				<div class="stats-section">
 					<div class="stat-item">
@@ -537,7 +537,7 @@
 						<p id="auditory-count">0</p>
 					</div>
 					<div class="stat-item">
-						<h3>Kinest®¶sico</h3>
+						<h3>Kinest√©sico</h3>
 						<p id="kinesthetic-count">0</p>
 					</div>
 					<div class="stat-item">
@@ -546,18 +546,18 @@
 					</div>
 				</div>
 				<div class="sequence-analysis">
-					<h3>An®¢lisis de Secuencia</h3>
-					<p id="sequence-result">La secuencia predominante aparecer®¢ aqu®™...</p>
+					<h3>An√°lisis de Secuencia</h3>
+					<p id="sequence-result">La secuencia predominante aparecer√° aqu√≠...</p>
 				</div>
 				<div class="vak-words-section">
-					<!-- Las listas de palabras VAK aparecer®¢n aqu®™ -->
+					<!-- Las listas de palabras VAK aparecer√°n aqu√≠ -->
 				</div>
 				<div class="entity-analysis">
 					<h3>Entidades Nombradas</h3>
-					<p id="entity-result">Las entidades identificadas aparecer®¢n aqu®™...</p>
+					<p id="entity-result">Las entidades identificadas aparecer√°n aqu√≠...</p>
 				</div>
 				<div class="chart-container">
-					<canvas id="vakChart" width="400" height="200" aria-label="Gr®¢fico de Estad®™sticas VAK"
+					<canvas id="vakChart" width="400" height="200" aria-label="Gr√°fico de Estad√≠sticas VAK"
 						role="img"></canvas>
 				</div>
 			</section>
@@ -565,17 +565,17 @@
 		</main>
 	</div>
 
-	<!-- Modal de Estad®™sticas -->
+	<!-- Modal de Estad√≠sticas -->
 	<div id="stats-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="stats-title"
 		aria-modal="true">
 		<div class="modal-content" tabindex="-1">
 			<span class="close" aria-label="Cerrar">&times;</span>
 			<div class="stats-content" id="stats-content">
-				<h2 id="stats-title">?? Estad®™sticas de Usuario</h2>
+				<h2 id="stats-title">üìä Estad√≠sticas de Usuario</h2>
 				<p>Textos Analizados: <span id="texts-analyzed">0</span></p>
 				<p>Palabras Visuales: <span id="visual-count-modal">0</span></p>
 				<p>Palabras Auditivas: <span id="auditory-count-modal">0</span></p>
-				<p>Palabras Kinest®¶sicas: <span id="kinesthetic-count-modal">0</span></p>
+				<p>Palabras Kinest√©sicas: <span id="kinesthetic-count-modal">0</span></p>
 				<p>Palabras Auditivo Digital: <span id="auditory-digital-count-modal">0</span></p>
 			</div>
 		</div>
@@ -585,20 +585,20 @@
 	<div id="info-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="info-title" aria-modal="true">
 		<div class="modal-content" tabindex="-1">
 			<span class="close" aria-label="Cerrar">&times;</span>
-			<h2 id="info-title">?? Informaci®Æn sobre el Analizador VAK Mejorado</h2>
-			<p>El Analizador VAK es una herramienta dise?ada para identificar elementos sensoriales en textos, bas®¢ndose
-				en el modelo de Programaci®Æn Neuroling®π®™stica (PNL) que clasifica la percepci®Æn en cuatro sistemas
-				principales: Visual, Auditivo, Kinest®¶sico y Auditivo Digital.</p>
-			<h3>C®Æmo funciona:</h3>
+			<h2 id="info-title">‚ÑπÔ∏è Informaci√≥n sobre el Analizador VAK Mejorado</h2>
+			<p>El Analizador VAK es una herramienta dise√±ada para identificar elementos sensoriales en textos, bas√°ndose
+				en el modelo de Programaci√≥n Neuroling√º√≠stica (PNL) que clasifica la percepci√≥n en cuatro sistemas
+				principales: Visual, Auditivo, Kinest√©sico y Auditivo Digital.</p>
+			<h3>C√≥mo funciona:</h3>
 			<ul>
-				<li><strong>Visual:</strong> Identifica palabras relacionadas con la vista y las im®¢genes mentales.</li>
-				<li><strong>Auditivo:</strong> Detecta t®¶rminos asociados con el sonido y la escucha.</li>
-				<li><strong>Kinest®¶sico:</strong> Reconoce palabras vinculadas a sensaciones y emociones.</li>
-				<li><strong>Auditivo Digital:</strong> Detecta t®¶rminos relacionados con el pensamiento l®Ægico y
-					anal®™tico.</li>
+				<li><strong>Visual:</strong> Identifica palabras relacionadas con la vista y las im√°genes mentales.</li>
+				<li><strong>Auditivo:</strong> Detecta t√©rminos asociados con el sonido y la escucha.</li>
+				<li><strong>Kinest√©sico:</strong> Reconoce palabras vinculadas a sensaciones y emociones.</li>
+				<li><strong>Auditivo Digital:</strong> Detecta t√©rminos relacionados con el pensamiento l√≥gico y
+					anal√≠tico.</li>
 			</ul>
-			<p>Adem®¢s, utilizando la API de TextRazor, el analizador identifica entidades nombradas y relaciones
-				sem®¢nticas para enriquecer el an®¢lisis y proporcionar una comprensi®Æn m®¢s profunda del texto.</p>
+			<p>Adem√°s, utilizando la API de TextRazor, el analizador identifica entidades nombradas y relaciones
+				sem√°nticas para enriquecer el an√°lisis y proporcionar una comprensi√≥n m√°s profunda del texto.</p>
 		</div>
 	</div>
 
@@ -609,12 +609,12 @@
 	<script src="patterns.js"></script>
 
 	<script>
-		// Funci®Æn para escapar caracteres especiales en expresiones regulares
+		// Funci√≥n para escapar caracteres especiales en expresiones regulares
         function escapeRegExp(string) {
             return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
 
-		// Listas de palabras VAK usando ra®™ces y patrones
+		// Listas de palabras VAK usando ra√≠ces y patrones
 		const visualPatterns = [
 		/\b(visual\w*)\b/gi,
 		/\b(clar\w*)\b/gi,
@@ -629,7 +629,7 @@
 		/\b(sombr\w*)\b/gi,
 		/\b(visualizar\w*)\b/gi,
 		/\b(ilumin\w*)\b/gi,
-		/\b(visi®Æn)\b/gi,
+		/\b(visi√≥n)\b/gi,
 		/\b(ver)\b/gi,
 		/\b(visto)\b/gi,
 		/\b(veo)\b/gi
@@ -661,11 +661,11 @@
 		/\b(camin\w*)\b/gi,
 		/\b(correr\w*)\b/gi,
 		/\b(calor\w*)\b/gi,
-		/\b(fr[i|®™]o\w*)\b/gi,
-		/\b(presi[®Æ|o]n\w*)\b/gi,
+		/\b(fr[i|√≠]o\w*)\b/gi,
+		/\b(presi[√≥|o]n\w*)\b/gi,
 		/\b(fuerz\w*)\b/gi,
 		/\b(sostener\w*)\b/gi,
-		/\b(tens[®Æ|o]n\w*)\b/gi,
+		/\b(tens[√≥|o]n\w*)\b/gi,
 		/\b(agarra\w*)\b/gi,
 		/\b(golpe\w*)\b/gi,
 		/\b(palpit\w*)\b/gi,
@@ -678,7 +678,7 @@
 		/\b(entend\w*)\b/gi,
 		/\b(comprend\w*)\b/gi,
 		/\b(conoc\w*)\b/gi,
-		/\b(l®Ægic\w*)\b/gi,
+		/\b(l√≥gic\w*)\b/gi,
 		/\b(analiz\w*)\b/gi,
 		/\b(proces\w*)\b/gi,
 		/\b(sistem\w*)\b/gi,
@@ -702,7 +702,7 @@
             auditoryDigitalCount: 0
         };
 
-        // Inicializaci®Æn del Gr®¢fico
+        // Inicializaci√≥n del Gr√°fico
         let vakChart;
 
         async function analyzeText() {
@@ -720,7 +720,7 @@
                 const analysis = highlightText(textInput);
                 document.getElementById('analysis-result').innerHTML = analysis.highlighted;
 
-                // Actualizar estad®™sticas
+                // Actualizar estad√≠sticas
                 userStats.textsAnalyzed++;
                 userStats.visualCount += analysis.visualCount;
                 userStats.auditoryCount += analysis.auditoryCount;
@@ -730,19 +730,19 @@
 
                 // Mostrar secuencia VAK
                 const sequence = getSequence(textInput);
-                document.getElementById('sequence-result').textContent = `Secuencia VAK: ${sequence.join(' ? ')}`;
+                document.getElementById('sequence-result').textContent = `Secuencia VAK: ${sequence.join(' ‚ûî ')}`;
 
                 // Mostrar listas de palabras VAK
                 displayVAKWords(analysis);
 
-                // Actualizar gr®¢fico
+                // Actualizar gr√°fico
                 updateChart(analysis);
 
-                // An®¢lisis adicional con TextRazor
+                // An√°lisis adicional con TextRazor
                 await analyzeWithTextRazor(textInput);
             } catch (error) {
-                console.error('Error en el an®¢lisis de texto:', error);
-                alert('Ocurri®Æ un error al analizar el texto.');
+                console.error('Error en el an√°lisis de texto:', error);
+                alert('Ocurri√≥ un error al analizar el texto.');
             } finally {
                 // Ocultar indicador de carga
                 showLoading(false);
@@ -758,12 +758,12 @@
             // Tokenizar el texto para evitar reemplazos dentro de etiquetas HTML
             const tokens = text.split(/(\s+|\n|<br>)/);
 
-            // Orden de categor®™as para evitar superposiciones
+            // Orden de categor√≠as para evitar superposiciones
             const categories = [
                 { patterns: auditoryDigitalPatterns, class: 'auditory-digital-word', type: 'Auditivo Digital', words: [] },
                 { patterns: visualPatterns, class: 'visual-word', type: 'Visual', words: [] },
                 { patterns: auditoryPatterns, class: 'auditory-word', type: 'Auditivo', words: [] },
-                { patterns: kinestheticPatterns, class: 'kinesthetic-word', type: 'Kinest®¶sico', words: [] }
+                { patterns: kinestheticPatterns, class: 'kinesthetic-word', type: 'Kinest√©sico', words: [] }
             ];
 
             const highlightedTokens = tokens.map(token => {
@@ -787,7 +787,7 @@
                                 auditoryCount++;
                                 category.words.push(token);
                             }
-                            if (category.type === 'Kinest®¶sico') {
+                            if (category.type === 'Kinest√©sico') {
                                 kinestheticCount++;
                                 category.words.push(token);
                             }
@@ -827,7 +827,7 @@
             document.getElementById('kinesthetic-count').textContent = userStats.kinestheticCount;
             document.getElementById('auditory-digital-count').textContent = userStats.auditoryDigitalCount;
 
-            // Actualizar tambi®¶n en el modal
+            // Actualizar tambi√©n en el modal
             document.getElementById('visual-count-modal').textContent = userStats.visualCount;
             document.getElementById('auditory-count-modal').textContent = userStats.auditoryCount;
             document.getElementById('kinesthetic-count-modal').textContent = userStats.kinestheticCount;
@@ -855,15 +855,15 @@
             document.body.classList.toggle('dark-mode');
             const toggleButton = document.getElementById('toggle-theme');
             if (document.body.classList.contains('dark-mode')) {
-                toggleButton.innerText = '?? Modo Claro';
+                toggleButton.innerText = '‚òÄÔ∏è Modo Claro';
                 toggleButton.setAttribute('aria-label', 'Alternar modo claro');
             } else {
-                toggleButton.innerText = '?? Modo Oscuro';
+                toggleButton.innerText = 'üåô Modo Oscuro';
                 toggleButton.setAttribute('aria-label', 'Alternar modo oscuro');
             }
         }
 
-        // Funci®Æn para mostrar estad®™sticas
+        // Funci√≥n para mostrar estad√≠sticas
         function showStats() {
             showModal('stats-modal');
         }
@@ -882,7 +882,7 @@
             modal.setAttribute('aria-hidden', 'true');
         }
 
-        // Cerrar modales al hacer clic en el bot®Æn de cerrar
+        // Cerrar modales al hacer clic en el bot√≥n de cerrar
         document.querySelectorAll('.close').forEach(closeBtn => {
             closeBtn.addEventListener('click', function () {
                 const modal = this.closest('.modal');
@@ -899,11 +899,11 @@
             });
         });
 
-        // Detectar preferencia de color del sistema y ajustar autom®¢ticamente
+        // Detectar preferencia de color del sistema y ajustar autom√°ticamente
         function detectColorScheme() {
             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.body.classList.add('dark-mode');
-                document.getElementById('toggle-theme').innerText = '?? Modo Claro';
+                document.getElementById('toggle-theme').innerText = '‚òÄÔ∏è Modo Claro';
                 document.getElementById('toggle-theme').setAttribute('aria-label', 'Alternar modo claro');
             }
         }
@@ -912,7 +912,7 @@
             detectColorScheme();
         });
 
-        // Funci®Æn para mostrar listas de palabras VAK detectadas
+        // Funci√≥n para mostrar listas de palabras VAK detectadas
         function displayVAKWords(analysis) {
             const vakWordsSection = document.querySelector('.vak-words-section');
             vakWordsSection.innerHTML = ''; // Limpiar contenido previo
@@ -920,7 +920,7 @@
             const categories = [
                 { type: 'Visual', words: analysis.visualWords },
                 { type: 'Auditivo', words: analysis.auditoryWords },
-                { type: 'Kinest®¶sico', words: analysis.kinestheticWords },
+                { type: 'Kinest√©sico', words: analysis.kinestheticWords },
                 { type: 'Auditivo Digital', words: analysis.auditoryDigitalWords }
             ];
 
@@ -953,7 +953,7 @@
             ];
 
             words.forEach(word => {
-                // Eliminar puntuaci®Æn
+                // Eliminar puntuaci√≥n
                 const cleanWord = word.replace(/[.,!?;:()]+$/g, '').toLowerCase();
                 for (const category of categories) {
                     for (const pattern of category.patterns) {
@@ -972,7 +972,7 @@
         function updateChart(analysis) {
             const ctx = document.getElementById('vakChart').getContext('2d');
             const data = {
-                labels: ['Visual', 'Auditivo', 'Kinest®¶sico', 'Auditivo Digital'],
+                labels: ['Visual', 'Auditivo', 'Kinest√©sico', 'Auditivo Digital'],
                 datasets: [{
                     label: 'Palabras VAK',
                     data: [analysis.visualCount, analysis.auditoryCount, analysis.kinestheticCount, analysis.auditoryDigitalCount],
@@ -1013,7 +1013,7 @@
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Categor®™as VAK'
+                                    text: 'Categor√≠as VAK'
                                 }
                             }
                         },
@@ -1037,10 +1037,10 @@
             }
         }
 
-        // Integraci®Æn con la API de TextRazor
+        // Integraci√≥n con la API de TextRazor
         async function analyzeWithTextRazor(text) {
             try {
-                // Reemplaza con la URL correcta de tu funci®Æn serverless
+                // Reemplaza con la URL correcta de tu funci√≥n serverless
                 const response = await fetch('/.netlify/functions/textrazor', {
                     method: 'POST',
                     headers: {
@@ -1059,8 +1059,8 @@
                 processTextRazorData(data);
 
             } catch (error) {
-                console.error('Error al comunicarse con la funci®Æn serverless:', error);
-                alert('Ocurri®Æ un error al analizar el texto con TextRazor.');
+                console.error('Error al comunicarse con la funci√≥n serverless:', error);
+                alert('Ocurri√≥ un error al analizar el texto con TextRazor.');
             }
         }
 
@@ -1111,7 +1111,7 @@
         });
         document.getElementById('show-stats').addEventListener('click', showStats);
 
-        // Accesibilidad Mejorada: Navegaci®Æn con teclado
+        // Accesibilidad Mejorada: Navegaci√≥n con teclado
         document.addEventListener('keydown', function (e) {
             if (e.key === 'Escape') {
                 document.querySelectorAll('.modal').forEach(modal => {
