@@ -1,1127 +1,396 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Analizador VAK Mejorado con TextRazor</title>
-	<style>
-		/* Variables de color */
-		:root {
-			--visual-color: #0040ff;
-			/* Azul */
-			--auditory-color: #a10303;
-			/* Rojo */
-			--kinesthetic-color: #017564;
-			/* Verde */
-			--auditory-digital-color: #ff8c00;
-			/* Naranja */
-			--entity-color: #8e44ad;
-			/* Morado */
-			--neutral-color: #2c3e50;
-			/* Color neutro */
-			--bg-color: #f4f4f4;
-			--text-color: #2c3e50;
-			--header-bg: #ffffff;
-			--card-bg: #fff;
-			--tooltip-bg: rgba(0, 0, 0, 0.8);
-			--tooltip-text: #fff;
-			--button-hover: #8e44ad;
-			--modal-bg: rgba(0, 0, 0, 0.5);
-			--focus-outline: #3498db;
-			--transition-speed: 0.3s;
-			--title-font-size: 2.5em;
-			--title-font-family: 'Verdana', sans-serif;
-			--title-letter-spacing: 2px;
-			--accordion-bg: #f9f9f9;
-			--spinner-size: 40px;
-			--spinner-border: 5px solid #f3f3f3;
-			--spinner-color: #3498db;
-		}
-
-		.dark-mode {
-			--bg-color: #2c3e50;
-			--text-color: #ecf0f1;
-			--header-bg: #34495e;
-			--card-bg: #2c3e50;
-			--tooltip-bg: rgba(255, 255, 255, 0.9);
-			--tooltip-text: #2c3e50;
-			--button-hover: #5e2a7f;
-			--accordion-bg: #34495e;
-		}
-
-		body {
-			font-family: 'Verdana', sans-serif;
-			line-height: 1.6;
-			color: var(--text-color);
-			margin: 0;
-			padding: 0;
-			background-color: var(--bg-color);
-			transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
-		}
-
-		.container {
-			max-width: 1400px;
-			margin: 0 auto;
-			background-color: var(--card-bg);
-			border-radius: 10px;
-			box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-			overflow: hidden;
-			padding: 20px;
-			transition: background-color var(--transition-speed) ease;
-		}
-
-		header {
-			background-color: var(--header-bg);
-			padding: 20px;
-			text-align: center;
-			border-radius: 10px 10px 0 0;
-			transition: background-color var(--transition-speed) ease;
-			position: relative;
-			border: 2px solid #000;
-		}
-
-		h1 {
-			color: var(--text-color);
-			margin: 0;
-			font-family: var(--title-font-family);
-			font-size: var(--title-font-size);
-			font-weight: bold;
-			text-transform: uppercase;
-			letter-spacing: var(--title-letter-spacing);
-			text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-			transition: color var(--transition-speed) ease;
-		}
-
-		nav {
-			display: flex;
-			justify-content: center;
-			background-color: var(--header-bg);
-			padding: 10px;
-			gap: 10px;
-			flex-wrap: wrap;
-			transition: background-color var(--transition-speed) ease;
-		}
-
-		nav button {
-			padding: 10px 15px;
-			border: none;
-			border-radius: 5px;
-			background-color: var(--neutral-color);
-			color: white;
-			cursor: pointer;
-			transition: background-color var(--transition-speed) ease, transform 0.2s ease;
-			min-width: 44px;
-			min-height: 44px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 16px;
-		}
-
-		nav button:hover {
-			background-color: var(--button-hover);
-			transform: scale(1.05);
-		}
-
-		nav button:focus {
-			outline: 2px solid var(--focus-outline);
-			outline-offset: 2px;
-		}
-
-		main {
-			display: flex;
-			flex-direction: column;
-			padding: 20px;
-			gap: 20px;
-		}
-
-		.text-input-section,
-		.analysis-section {
-			background-color: var(--card-bg);
-			border-radius: 8px;
-			padding: 20px;
-			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-			transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
-		}
-
-		.text-input-section h2,
-		.analysis-section h2 {
-			font-size: 1.8em;
-			margin-bottom: 15px;
-			text-align: center;
-			color: var(--text-color);
-		}
-
-		.textarea-container {
-			width: 100%;
-			margin-bottom: 20px;
-		}
-
-		.textarea-container textarea {
-			width: 100%;
-			height: 200px;
-			padding: 10px;
-			border-radius: 5px;
-			border: 1px solid #ddd;
-			font-size: 16px;
-			resize: vertical;
-			font-family: 'Verdana', sans-serif;
-			transition: border-color var(--transition-speed) ease;
-			background-color: var(--bg-color);
-			color: var(--text-color);
-		}
-
-		.textarea-container textarea:hover,
-		.textarea-container textarea:focus {
-			border-color: var(--neutral-color);
-			outline: none;
-		}
-
-		.analyze-button,
-		.btn-export {
-			display: block;
-			width: 100%;
-			padding: 10px;
-			margin-top: 10px;
-			border: none;
-			border-radius: 5px;
-			background-color: var(--neutral-color);
-			color: white;
-			font-size: 16px;
-			cursor: pointer;
-			transition: background-color var(--transition-speed) ease, transform 0.2s ease;
-		}
-
-		.analyze-button:hover,
-		.btn-export:hover {
-			background-color: var(--button-hover);
-			transform: scale(1.02);
-		}
-
-		.analyze-button:focus,
-		.btn-export:focus {
-			outline: 2px solid var(--focus-outline);
-			outline-offset: 2px;
-		}
-
-		.analysis-result {
-			margin-top: 20px;
-			padding: 15px;
-			border-radius: 5px;
-			background-color: var(--bg-color);
-			white-space: pre-wrap;
-			overflow-wrap: break-word;
-			position: relative;
-		}
-
-		/* Spinner Styles */
-		.spinner {
-			border: var(--spinner-border);
-			border-top: var(--spinner-color) solid transparent;
-			border-radius: 50%;
-			width: var(--spinner-size);
-			height: var(--spinner-size);
-			animation: spin 1s linear infinite;
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			display: none;
-			/* Oculto por defecto */
-			z-index: 100;
-		}
-
-		@keyframes spin {
-			to {
-				transform: translate(-50%, -50%) rotate(360deg);
-			}
-		}
-
-		.highlight {
-			font-weight: bold;
-			padding: 2px 4px;
-			border-radius: 3px;
-			position: relative;
-			cursor: pointer;
-		}
-
-		.visual-word {
-			background-color: var(--visual-color);
-			color: white;
-		}
-
-		.auditory-word {
-			background-color: var(--auditory-color);
-			color: white;
-		}
-
-		.kinesthetic-word {
-			background-color: var(--kinesthetic-color);
-			color: white;
-		}
-
-		.auditory-digital-word {
-			background-color: var(--auditory-digital-color);
-			color: white;
-		}
-
-		.entity-word {
-			background-color: var(--entity-color);
-			color: white;
-		}
-
-		.stats-section {
-			display: flex;
-			justify-content: space-around;
-			margin-top: 20px;
-			flex-wrap: wrap;
-			gap: 10px;
-		}
-
-		.stat-item {
-			text-align: center;
-			padding: 10px;
-			background-color: var(--card-bg);
-			border-radius: 5px;
-			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-			flex: 1 1 150px;
-			transition: transform var(--transition-speed) ease;
-		}
-
-		.stat-item:hover {
-			transform: translateY(-5px);
-		}
-
-		.sequence-analysis,
-		.entity-analysis,
-		.vak-words-section,
-		.chart-container {
-			margin-top: 20px;
-			padding: 15px;
-			background-color: var(--bg-color);
-			border-radius: 5px;
-		}
-
-		/* Modal Styles */
-		.modal {
-			display: none;
-			position: fixed;
-			z-index: 1000;
-			left: 0;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			overflow: auto;
-			background-color: var(--modal-bg);
-			transition: opacity var(--transition-speed) ease;
-		}
-
-		.modal-content {
-			background-color: var(--card-bg);
-			margin: 10% auto;
-			padding: 20px;
-			border: 1px solid #888;
-			width: 90%;
-			max-width: 500px;
-			border-radius: 10px;
-			position: relative;
-			box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-			animation: fadeIn var(--transition-speed) ease;
-			transition: background-color var(--transition-speed) ease;
-			font-family: 'Verdana', sans-serif;
-		}
-
-		.close {
-			color: #aaa;
-			position: absolute;
-			top: 10px;
-			right: 20px;
-			font-size: 28px;
-			font-weight: bold;
-			cursor: pointer;
-			transition: color var(--transition-speed) ease;
-		}
-
-		.close:hover,
-		.close:focus {
-			color: black;
-			text-decoration: none;
-			cursor: pointer;
-		}
-
-		@keyframes fadeIn {
-			from {
-				opacity: 0;
-				transform: translateY(-20px);
-			}
-
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
-
-		/* Tooltip Styles */
-		.highlight[data-tooltip]::after {
-			content: attr(data-tooltip);
-			position: absolute;
-			bottom: 125%;
-			left: 50%;
-			transform: translateX(-50%);
-			background-color: var(--tooltip-bg);
-			color: var(--tooltip-text);
-			padding: 5px;
-			border-radius: 6px;
-			white-space: nowrap;
-			opacity: 0;
-			transition: opacity var(--transition-speed) ease;
-			pointer-events: none;
-			z-index: 1001;
-		}
-
-		.highlight[data-tooltip]::before {
-			content: "";
-			position: absolute;
-			top: 100%;
-			left: 50%;
-			margin-left: -5px;
-			border-width: 5px;
-			border-style: solid;
-			border-color: var(--tooltip-bg) transparent transparent transparent;
-			opacity: 0;
-			transition: opacity var(--transition-speed) ease;
-			pointer-events: none;
-			z-index: 1001;
-		}
-
-		.highlight[data-tooltip]:hover::after,
-		.highlight[data-tooltip]:hover::before {
-			opacity: 1;
-		}
-
-		/* Optimización Responsive */
-		@media (max-width: 768px) {
-			.container {
-				padding: 10px;
-			}
-
-			h1 {
-				font-size: 1.8em;
-			}
-
-			.text-input-section textarea {
-				height: 150px;
-			}
-
-			.stats-section {
-				flex-direction: column;
-				align-items: center;
-			}
-
-			.stat-item {
-				width: 100%;
-				margin-bottom: 10px;
-			}
-
-			.analyze-button,
-			.btn-export {
-				width: 100%;
-			}
-
-			.modal-content {
-				margin: 20% auto;
-			}
-		}
-
-		/* Semántica y Accesibilidad */
-		.sr-only {
-			position: absolute;
-			width: 1px;
-			height: 1px;
-			padding: 0;
-			margin: -1px;
-			overflow: hidden;
-			clip: rect(0, 0, 0, 0);
-			white-space: nowrap;
-			border: 0;
-		}
-
-		/* Loading Overlay Styles */
-		.loading-overlay {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: rgba(255, 255, 255, 0.8);
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			z-index: 2000;
-			display: none;
-			/* Oculto por defecto */
-		}
-
-		/* Botones más profesionales */
-		.analyze-button,
-		.btn-export {
-			background-color: var(--neutral-color);
-			color: white;
-			border: none;
-			padding: 15px 20px;
-			font-size: 16px;
-			border-radius: 8px;
-			cursor: pointer;
-			transition: background-color var(--transition-speed), transform 0.2s;
-			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		}
-
-		.analyze-button:hover,
-		.btn-export:hover {
-			background-color: var(--button-hover);
-			transform: translateY(-2px);
-			box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-		}
-
-		.analyze-button:active,
-		.btn-export:active {
-			transform: translateY(0);
-			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-		}
-	</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrones Hipnóticos Nueva Versión V3.0 - PNL 2</title>
+    <meta name="description" content="Descubre el Poder Secreto de la Hipnosis Conversacional para Persuadir, Seducir y Multiplicar Tus Ventas y evita ser ignorado o rechazado con Patrones Hipnóticos 360 V2.0 de Forma Garantizada">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5; /* A slightly different light gray */
+            font-size: 18px; /* Base font size */
+        }
+        #page-container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        .section-full {
+            width: 100%;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        .bg-gray {
+            background-color: #f7f7f7;
+        }
+        h1, h2, h3, h4 {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            color: #333;
+            line-height: 1.3;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 2.2em;
+            color: #ff0101;
+            font-weight: 700;
+        }
+        h2 {
+            font-size: 1.8em;
+        }
+        p {
+            margin-bottom: 1.2em;
+        }
+        .text-center {
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 30px auto;
+        }
+        .testimonial {
+            border: 1px solid #e5e5e5;
+            padding: 25px;
+            margin: 40px auto;
+            background-color: #f9f9f9;
+            max-width: 800px;
+            overflow: hidden; /* Clear floats */
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .testimonial-img {
+            float: left;
+            margin-right: 25px;
+            width: 100px;
+            border-radius: 50%;
+        }
+        .cta-button {
+            display: block;
+            margin: 20px auto;
+            width: fit-content;
+        }
+        .cta-button img {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            border-radius: 10px;
+        }
+        .cta-button:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+        }
+        ul.checkmark {
+            list-style-type: none;
+            padding: 0;
+            max-width: 750px;
+            margin: 30px auto;
+        }
+        ul.checkmark li {
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16"><path fill="%23ff0101" d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/></svg>') no-repeat left 4px;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        .section, .container {
+            /* Basic animation */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .section.is-visible, .container.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .section-full {
+            width: 100%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        .bg-gray {
+            background-color: #f7f7f7;
+        }
+        .col-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: center;
+            margin: 40px 0;
+        }
+        @media (max-width: 768px) {
+            .col-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        blockquote {
+            background: #f9f9f9;
+            border-left: 10px solid #ccc;
+            margin: 1.5em 10px;
+            padding: 0.5em 10px;
+            quotes: "\201C""\201D""\2018""\2019";
+        }
+        blockquote:before {
+            color: #ccc;
+            content: open-quote;
+            font-size: 4em;
+            line-height: 0.1em;
+            margin-right: 0.25em;
+            vertical-align: -0.4em;
+        }
+        blockquote p {
+            display: inline;
+        }
+    </style>
 </head>
-
 <body>
-	<!-- Loading Overlay -->
-	<div class="loading-overlay" id="loading-overlay" aria-hidden="true">
-		<div class="spinner" role="status" aria-label="Cargando"></div>
-	</div>
+    <div id="countdown-timer" style="text-align:center; font-size:24px; padding:15px; background-color:#fff; border-bottom: 2px solid #ddd; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;"></div>
 
-	<div class="container">
-		<header>
-			<h1>Analizador VAK Mejorado con TextRazor</h1>
-		</header>
-		<nav>
-			<button id="toggle-theme" aria-label="Alternar modo oscuro">
-                🌙 Modo Oscuro
-            </button>
-			<button id="show-info" aria-label="Mostrar información">
-                ℹ️ Información
-            </button>
-			<button id="show-stats" aria-label="Mostrar estadísticas">
-                📊 Estadísticas
-            </button>
-		</nav>
-		<main>
-			<section class="text-input-section">
-				<h2>Ingrese su texto para analizar</h2>
-				<div class="textarea-container">
-					<label for="text-input" class="sr-only">Ingresa tu texto aquí</label>
-					<textarea id="text-input" placeholder="Escriba o pegue su texto aquí..." aria-label="Área de texto para ingresar el discurso"></textarea>
-				</div>
-				<button id="analyze-btn" class="analyze-button" aria-label="Analizar texto">Analizar Texto</button>
-			</section>
-			<section class="analysis-section">
-				<h2>Resultado del Análisis</h2>
-				<div id="analysis-result" class="analysis-result" aria-live="polite">
-					El texto analizado aparecerá aquí...
-				</div>
-				<div class="stats-section">
-					<div class="stat-item">
-						<h3>Visual</h3>
-						<p id="visual-count">0</p>
-					</div>
-					<div class="stat-item">
-						<h3>Auditivo</h3>
-						<p id="auditory-count">0</p>
-					</div>
-					<div class="stat-item">
-						<h3>Kinestésico</h3>
-						<p id="kinesthetic-count">0</p>
-					</div>
-					<div class="stat-item">
-						<h3>Auditivo Digital</h3>
-						<p id="auditory-digital-count">0</p>
-					</div>
-				</div>
-				<div class="sequence-analysis">
-					<h3>Análisis de Secuencia</h3>
-					<p id="sequence-result">La secuencia predominante aparecerá aquí...</p>
-				</div>
-				<div class="vak-words-section">
-					<!-- Las listas de palabras VAK aparecerán aquí -->
-				</div>
-				<div class="entity-analysis">
-					<h3>Entidades Nombradas</h3>
-					<p id="entity-result">Las entidades identificadas aparecerán aquí...</p>
-				</div>
-				<div class="chart-container">
-					<canvas id="vakChart" width="400" height="200" aria-label="Gráfico de Estadísticas VAK"
-						role="img"></canvas>
-				</div>
-			</section>
-			<button class="btn-export" id="export-results" aria-label="Exportar resultados">Exportar Resultados</button>
-		</main>
-	</div>
+    <main id="page-container">
+        <div class="section-full">
+            <div class="container">
+                <p class="text-center">Si estás cansado de escuchar rechazos y deseas ser más persuasivo persuadiendo al subconsciente, ¡AL FIN! Trainer en Hipnosis Ericksoniana y en Programación Neurolingüística Rompe el silencio y dice</p>
+                <p class="text-center" style="color: rgb(204, 0, 0); font-family: 'Times New Roman', Times, serif; font-size: 24px;">ANUNCIANDO EL NUEVO SISTEMA<br><span style="font-size: 36px;"><b>Patrones Hipnóticos 360 V3.0<br>¡Nueva Versión Con 3 Programas de <br>Generación de Patrones Hipnóticos <br>que crean Patrones <i>de forma completamente<br>Automática</i> con tan solo apretar 1 botón!</b></span></p>
+                <h1>"Descubre el Poder Secreto de la <span style="color:#ff0101;">Hipnosis Conversacional</span> para Persuadir, Seducir y Multiplicar Tus Ventas de Forma Acelerada Sin tener que Gastar Cientos de horas, miles de dólares en seminarios, ó Leyendo libros anticuados con mi Nuevo Sistema Que Incluye 153 Cartas Hipnóticas 3 Métodos de Aprendizaje Subconsciente <i>Ultra-Veloz</i> y <span style="color: #ff0101;">5 Programas para la Generación de Patrones Hipnóticos y Metáforas Automáticas</span>"</h1>
+            </div>
+        </div>
 
-	<!-- Modal de Estadísticas -->
-	<div id="stats-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="stats-title"
-		aria-modal="true">
-		<div class="modal-content" tabindex="-1">
-			<span class="close" aria-label="Cerrar">&times;</span>
-			<div class="stats-content" id="stats-content">
-				<h2 id="stats-title">📊 Estadísticas de Usuario</h2>
-				<p>Textos Analizados: <span id="texts-analyzed">0</span></p>
-				<p>Palabras Visuales: <span id="visual-count-modal">0</span></p>
-				<p>Palabras Auditivas: <span id="auditory-count-modal">0</span></p>
-				<p>Palabras Kinestésicas: <span id="kinesthetic-count-modal">0</span></p>
-				<p>Palabras Auditivo Digital: <span id="auditory-digital-count-modal">0</span></p>
-			</div>
-		</div>
-	</div>
+        <div class="section-full">
+            <div class="container">
+                <iframe data-src="https://fast.wistia.net/embed/iframe/mows10qixu?playerColor=00adef&autoplay=0&endVideoBehavior=default&playbackRateControl=false&playbar=true&muted=false" allowtransparency="true" frameborder="0" scrolling="no" class="lazy wistia_embed" name="wistia_embed" allowfullscreen style="width:100%; height:506px; border: 8px solid #eee; box-sizing: border-box;"></iframe>
+                <p class="text-center" style="margin-top: 20px;">...Asegurado por mi Excepcional Garantía de Resultados, Coaching personalizado y Bonos Obsequios valorados en US$1000,00 dólares (Sigue leyendo para averiguar todos los detalles)</p>
+            </div>
+        </div>
 
-	<!-- Modal Informativo -->
-	<div id="info-modal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="info-title" aria-modal="true">
-		<div class="modal-content" tabindex="-1">
-			<span class="close" aria-label="Cerrar">&times;</span>
-			<h2 id="info-title">ℹ️ Información sobre el Analizador VAK Mejorado</h2>
-			<p>El Analizador VAK es una herramienta diseñada para identificar elementos sensoriales en textos, basándose
-				en el modelo de Programación Neurolingüística (PNL) que clasifica la percepción en cuatro sistemas
-				principales: Visual, Auditivo, Kinestésico y Auditivo Digital.</p>
-			<h3>Cómo funciona:</h3>
-			<ul>
-				<li><strong>Visual:</strong> Identifica palabras relacionadas con la vista y las imágenes mentales.</li>
-				<li><strong>Auditivo:</strong> Detecta términos asociados con el sonido y la escucha.</li>
-				<li><strong>Kinestésico:</strong> Reconoce palabras vinculadas a sensaciones y emociones.</li>
-				<li><strong>Auditivo Digital:</strong> Detecta términos relacionados con el pensamiento lógico y
-					analítico.</li>
-			</ul>
-			<p>Además, utilizando la API de TextRazor, el analizador identifica entidades nombradas y relaciones
-				semánticas para enriquecer el análisis y proporcionar una comprensión más profunda del texto.</p>
-		</div>
-	</div>
+        <div class="section-full">
+            <div class="container">
+                <div class="col-2">
+                    <div>
+                        <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2020/12/foto-hernan-vilaro-1-1.jpg" alt="Hernan Vilaro" class="lazy" width="200" style="border: 6px solid #eee; border-radius: 50%;">
+                    </div>
+                    <div>
+                        <p>Estimad@ Amig@,</p>
+                        <p>•¿Te agradaría multiplicar las ventas de tus productos, servicios o ideas para ganar más dinero y llenar tus bolsillos?</p>
+                        <p>• ¿Te gustaría ser más persuasivo y a la vez librarte de frustraciones por no lograr cerrar ese trato, ese negocio o de persuadir efectivamente con esa presentación?</p>
+                        <p>•¿Desearías estar en control de cada conversación o interacción profesional en dónde cada palabra que digas genere los resultados que tanto deseas?</p>
+                    </div>
+                </div>
+                <p>Si respondiste afirmativamente a cualquiera de esas preguntas, estás en el lugar correcto y por ese motivo te quiero contar una historia que revela el principio del éxito que cambiará tu vida.<br>(Y más adelante te revelaré la llave que descubrió Freud sobre el lenguaje que te será extremadamente útil...)</p>
+            </div>
+        </div>
 
-	<!-- Incluimos la biblioteca Chart.js -->
-	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <div class="section-full bg-gray">
+            <div class="container">
+                <h2>¿Te preguntaste alguna vez, como yo lo hice, qué fue lo que marcó la diferencia que hizo la diferencia en sus vidas?</h2>
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2023/08/difeerencia.jpg" alt="Diferencia" class="lazy">
+                <p>Esa fue mi obsesión durante años, el responder a la pregunta ¿Qué marca la diferencia en la vida de las personas? las pruebas me han demostrado que no es talento o dedicación. La diferencia radica en el nivel de persuasión que una persona pueda llegar a alcanzar.</p>
+            </div>
+        </div>
 
-	<!-- Incluir los patrones VAK desde un archivo externo -->
-	<script src="patterns.js"></script>
+        <div class="section-full">
+            <div class="container">
+                <h2>Aquí la Fórmula del Éxito<br>Tu Éxito, en todas las áreas de tu vida, está y va a seguir estando definido por tu forma de relacionarte con los demás...</h2>
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2020/09/liderazgo-tranformacional-1-1.png" alt="Liderazgo Transformacional" width="300" class="lazy">
+                <div class="testimonial">
+                    <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2023/07/freud.jpg" alt="Sigmund Freud" class="lazy testimonial-img">
+                    <h4>"Las palabras fueron en su origen magia, e incluso hasta el día de hoy las palabras retienen mucho de su poder mágico ancestral. Con las palabras una persona puede hacer a la otra inmensamente feliz, o llevarla a la desesperación”</h4>
+                    <p style="text-align: right; clear: both;"><strong>Sigmund Freud</strong></p>
+                </div>
+            </div>
+        </div>
 
-	<script>
-		// Función para escapar caracteres especiales en expresiones regulares
-        function escapeRegExp(string) {
-            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        }
+        <div class="section-full bg-gray">
+            <div class="container">
+                <h2>Mi Frustración al querer aprender Los Patrones Hipnóticos de Milton</h2>
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2021/09/istockphoto-1205852013-612x612-1.jpg" alt="Frustración" class="lazy">
+                <p><b>Los patrones hipnóticos son frases que provocan un estado de trance en la mente del receptor, un estado en el que se conecta con su subconsciente y se vuelve más receptivo al cambio.</b></p>
+                <p>Sígueme mientras te cuento mi FRUSTRACIÓN EN EL ESTUDIO DE LOS PATRONES HIPNOTICOS.</p>
+            </div>
+        </div>
 
-		// Listas de palabras VAK usando raíces y patrones
-		const visualPatterns = [
-		/\b(visual\w*)\b/gi,
-		/\b(clar\w*)\b/gi,
-		/\b(vid\w*)\b/gi,
-		/\b(mir\w*)\b/gi,
-		/\b(observ\w*)\b/gi,
-		/\b(enfoc\w*)\b/gi,
-		/\b(perspect\w*)\b/gi,
-		/\b(imagen\w*)\b/gi,
-		/\b(color\w*)\b/gi,
-		/\b(aparienc\w*)\b/gi,
-		/\b(sombr\w*)\b/gi,
-		/\b(visualizar\w*)\b/gi,
-		/\b(ilumin\w*)\b/gi,
-		/\b(visión)\b/gi,
-		/\b(ver)\b/gi,
-		/\b(visto)\b/gi,
-		/\b(veo)\b/gi
-		];
-		
-		const auditoryPatterns = [
-		/\b(audit\w*)\b/gi,
-		/\b(sonid\w*)\b/gi,
-		/\b(escuch\w*)\b/gi,
-		/\b(o[i|y]r\w*)\b/gi,
-		/\b(habl\w*)\b/gi,
-		/\b(sonar\w*)\b/gi,
-		/\b(reson\w*)\b/gi,
-		/\b(ruido\w*)\b/gi,
-		/\b(silenci\w*)\b/gi,
-		/\b(susurr\w*)\b/gi,
-		/\b(melod\w*)\b/gi,
-		/\b(cantar\w*)\b/gi,
-		/\b(grit\w*)\b/gi,
-		/\b(decir\w*)\b/gi,
-		/\b(escucho)\b/gi
-		];
-		
-		const kinestheticPatterns = [
-		/\b(sent\w*)\b/gi,
-		/\b(tocar\w*)\b/gi,
-		/\b(sensac\w*)\b/gi,
-		/\b(mov\w*)\b/gi,
-		/\b(camin\w*)\b/gi,
-		/\b(correr\w*)\b/gi,
-		/\b(calor\w*)\b/gi,
-		/\b(fr[i|í]o\w*)\b/gi,
-		/\b(presi[ó|o]n\w*)\b/gi,
-		/\b(fuerz\w*)\b/gi,
-		/\b(sostener\w*)\b/gi,
-		/\b(tens[ó|o]n\w*)\b/gi,
-		/\b(agarra\w*)\b/gi,
-		/\b(golpe\w*)\b/gi,
-		/\b(palpit\w*)\b/gi,
-		/\b(siento)\b/gi
-		];
-		
-		const auditoryDigitalPatterns = [
-		/\b(pens\w*)\b/gi,
-		/\b(concept\w*)\b/gi,
-		/\b(entend\w*)\b/gi,
-		/\b(comprend\w*)\b/gi,
-		/\b(conoc\w*)\b/gi,
-		/\b(lógic\w*)\b/gi,
-		/\b(analiz\w*)\b/gi,
-		/\b(proces\w*)\b/gi,
-		/\b(sistem\w*)\b/gi,
-		/\b(calcul\w*)\b/gi,
-		/\b(estudi\w*)\b/gi,
-		/\b(cuestion\w*)\b/gi,
-		/\b(inform\w*)\b/gi,
-		/\b(decid\w*)\b/gi,
-		/\b(plane\w*)\b/gi,
-		/\b(razon\w*)\b/gi,
-		/\b(ideas?)\b/gi,
-		/\b(pensamiento)\b/gi
-		];
+        <div class="section-full">
+            <div class="container">
+                <h2>Te presento<br>El método definitivo para persuadir con éxito:</h2>
+                <h2 style="color: #000;">Patrones Hipnóticos 360 V3.0<br>El Entrenamiento Más Acelerado<br>Y Avanzado sobre los Patrones <br>Hipnóticos de Milton Erickson<br>con 3 Programas que crean <br>los Patrones Hipnóticos por ti</h2>
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2017/04/patrones-hipnoticos-360-box1.jpg" alt="Patrones Hipnóticos 360" class="lazy">
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2023/07/tutuli.jpg" alt="Contenido del curso" class="lazy">
+            </div>
+        </div>
 
-        // Variables de Usuario
-        let userStats = {
-            textsAnalyzed: 0,
-            visualCount: 0,
-            auditoryCount: 0,
-            kinestheticCount: 0,
-            auditoryDigitalCount: 0
-        };
+        <div class="section-full bg-gray">
+            <div class="container">
+                <div class="col-2">
+                    <div>
+                        <h2>Módulo 1 <br><span style="color: #000;">El Código Secreto de la Influencia</span></h2>
+                        <ul class="checkmark">
+                            <li>Descubre cómo tus creencias moldean tu realidad.</li>
+                            <li>Las 7 Creencias Inquebrantables de los Maestros Persuasores.</li>
+                            <li>Instala una mentalidad de éxito con mi método secreto.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2017/04/patrones-hipnoticos-360-modulo-1.jpg" alt="Módulo 1" class="lazy">
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div>
+                        <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2017/04/Patrones-Hipnoticos-360-Modulo-2.jpg" alt="Módulo 2" class="lazy">
+                    </div>
+                    <div>
+                        <h2>Módulo 2<br><span style="color: #000;">El Código Secreto de la Conexión</span></h2>
+                        <ul class="checkmark">
+                            <li>Domina los 4 Idiomas de la Persuasión Cerebral.</li>
+                            <li>Crea rapport instantáneo con cualquier persona.</li>
+                            <li>Descubre el Patrón del Carisma usado por grandes líderes.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div>
+                        <h2>Módulo 3 <br><span style="color: #000;">El Arte de la Influencia Invisible</span></h2>
+                        <ul class="checkmark">
+                            <li>Domina la Conversación Hipnótica y Persuade con Elegancia.</li>
+                            <li>Fórmulas fáciles para crear tus propios mensajes persuasivos.</li>
+                            <li>Aprende a fusionar patrones para generar nuevos.</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2017/04/Patrones-Hipnoticos-360-Modulo-3.jpg" alt="Módulo 3" class="lazy">
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        // Inicialización del Gráfico
-        let vakChart;
+        <div class="section-full">
+            <div class="container">
+                <h2>Testimonios de Clientes Satisfechos</h2>
+                <iframe data-src="https://www.youtube.com/embed/2cFnFl0Y-rg" class="lazy" style="width:100%; height:400px; border: 8px solid #eee; box-sizing: border-box;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="testimonial">
+                    <p>"Quería agradecer muchísimo a Hernán por los cursos que hace. Me parecen de un grandísimo nivel... Estoy muy contento con el resultado que consigo con tus cursos. Es una pasada."</p>
+                </div>
+                <iframe data-src="https://www.youtube.com/embed/I-euE69_Ca8" class="lazy" style="width:100%; height:400px; border: 8px solid #eee; box-sizing: border-box;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="testimonial">
+                    <p>“El curso de patrones hipnóticos es muy fácil de leer y de aplicar. Me ha ayudado a entender mejor las situaciones cotidianas y a usar un lenguaje más poderoso.”</p>
+                </div>
+            </div>
+        </div>
 
-        async function analyzeText() {
-            const textInput = document.getElementById('text-input').value;
-            if (!textInput.trim()) {
-                alert("Por favor, ingresa un texto para analizar.");
-                return;
+        <div class="section-full bg-gray">
+            <div class="container text-center">
+                <h2>¿Cuál es la Inversión para Acceder a Patrones Hipnóticos 360 V3.0?</h2>
+                <p>Tu inversión hoy, por precio promoción lanzamiento será solamente de 1 pago 197 ó 3 pequeñas cuotas de 77.</p>
+                <a href="https://pnl2.thrivecart.com/patrones-hipnoticos-360-preguntas-kuanti/?coupon=PATRONESHIPNOTICOSVIP777" class="cta-button"><img data-src="https://pnl2.com.ar/p/wp-content/uploads/2018/10/297-tachado-197.jpg" alt="Comprar ahora por 197" class="lazy"></a>
+                <a href="https://pnl2.thrivecart.com/patrones-hipnoticos-360-3-reguntas-c/" class="cta-button"><img data-src="https://pnl2.com.ar/p/wp-content/uploads/2018/10/297-tachado-3-pagos-de-77.jpg" alt="Comprar ahora en 3 pagos de 77" class="lazy"></a>
+            </div>
+        </div>
+
+        <div class="section-full">
+            <div class="container text-center">
+                <h2 style="color: #000080;">*Garantía de Satisfacción Total*<br>Experimenta la Magia de los Patrones Hipnóticos o Recibe un Reembolso Completo y Conserva los Bonos</h2>
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2020/02/garantia-60-dias-1.png" alt="Garantía de 60 días" width="224" class="lazy">
+                <blockquote><p>Te ofrezco 2 meses completos (60 días) de garantía para que compruebes que este curso realmente funciona. Si después de 60 días no experimentas un cambio radical en tu comunicación, tus relaciones y tus resultados, te devuelvo tu dinero.</p></blockquote>
+            </div>
+        </div>
+
+        <div class="section-full bg-gray">
+            <div class="container text-center">
+                <h1>Y si lo adquieres ahora, te llevarás los siguientes<br>14 MEGA-BONOS OBSEQUIOS GRATIS.</h1>
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2020/11/bonos-obsequios.jpg" alt="Bonos" width="245" class="lazy">
+                <!-- Simplified Bonuses for brevity -->
+                <h2><span style="color: #ff0101;">BONO #1</span> - Desbloquea tu Maestro Persuasor Interior</h2>
+                <h2><span style="color: #ff0101;">BONO #2</span> - Patrones Hipnóticos a Prueba de Olvidos</h2>
+                <h2><span style="color: #ff0101;">BONO #3</span> - Curso Completo de Automotivación</h2>
+                <h2><span style="color: #ff0101;">BONO #4</span> - Certificado de Autoridad</h2>
+                <h2><span style="color: #ff0101;">BONO #5</span> - Coaching Personalizado Vía Email</h2>
+                <h2><span style="color: #ff0101;">BONO #6</span> - Acceso a Cursos Anteriores</h2>
+                <h2><span style="color: #ff0101;">BONO #7</span> - El Secreto de las Metáforas Hipnóticas</h2>
+                <h2><span style="color: #ff0101;">BONO #8</span> - Las 664 Palabras de la Persuasión</h2>
+                <h2><span style="color: #ff0101;">BONO #9</span> - 30 Asesorías por Whatsapp</h2>
+                <h2><span style="color: #ff0101;">BONO #10</span> - Checklist de 150 Patrones Hipnóticos</h2>
+                <h2><span style="color: #ff0101;">BONO #11</span> - Generador de Patrones Hipnóticos</h2>
+                <h2><span style="color: #ff0101;">BONO #12</span> - Generador de Inducciones Hipnóticas</h2>
+                <h2><span style="color: #ff0101;">BONO #13</span> - Generador de Patrones con Palabras de Poder</h2>
+                <h2><span style="color: #ff0101;">BONO #14</span> - Cupón de U$S 130,00 de DESCUENTO</h2>
+            </div>
+        </div>
+
+        <div class="section-full">
+            <div class="container text-center" style="margin-top: 40px;">
+                <p>Deseándote que tomes la mejor decisión para ti y los tuyos se despide tu amigo,</p>
+                <img data-src="https://pnl2.com.ar/p/wp-content/uploads/2020/05/firma-1.gif" alt="Firma de Hernán Vilaró" width="199" class="lazy">
+                <p><strong>Hernán Vilaró</strong><br>Presidente de PNL 2.0</p>
+                <p>P.D: Cualquier consulta que tengas escríbeme a patroneshipnoticos@gmail.com</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Countdown Timer
+            const countdownElement = document.getElementById('countdown-timer');
+            let timeLeft = 172800; // 2 days in seconds
+            function formatTime(seconds) {
+                const days = Math.floor(seconds / 86400);
+                seconds %= 86400;
+                const hours = Math.floor(seconds / 3600);
+                seconds %= 3600;
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`;
             }
-
-            // Mostrar indicador de carga
-            showLoading(true);
-
-            try {
-                // Analizar el texto localmente para detectar palabras VAK
-                const analysis = highlightText(textInput);
-                document.getElementById('analysis-result').innerHTML = analysis.highlighted;
-
-                // Actualizar estadísticas
-                userStats.textsAnalyzed++;
-                userStats.visualCount += analysis.visualCount;
-                userStats.auditoryCount += analysis.auditoryCount;
-                userStats.kinestheticCount += analysis.kinestheticCount;
-                userStats.auditoryDigitalCount += analysis.auditoryDigitalCount;
-                updateStats();
-
-                // Mostrar secuencia VAK
-                const sequence = getSequence(textInput);
-                document.getElementById('sequence-result').textContent = `Secuencia VAK: ${sequence.join(' ➔ ')}`;
-
-                // Mostrar listas de palabras VAK
-                displayVAKWords(analysis);
-
-                // Actualizar gráfico
-                updateChart(analysis);
-
-                // Análisis adicional con TextRazor
-                await analyzeWithTextRazor(textInput);
-            } catch (error) {
-                console.error('Error en el análisis de texto:', error);
-                alert('Ocurrió un error al analizar el texto.');
-            } finally {
-                // Ocultar indicador de carga
-                showLoading(false);
-            }
-        }
-
-        function highlightText(text) {
-            let visualCount = 0;
-            let auditoryCount = 0;
-            let kinestheticCount = 0;
-            let auditoryDigitalCount = 0;
-
-            // Tokenizar el texto para evitar reemplazos dentro de etiquetas HTML
-            const tokens = text.split(/(\s+|\n|<br>)/);
-
-            // Orden de categorías para evitar superposiciones
-            const categories = [
-                { patterns: auditoryDigitalPatterns, class: 'auditory-digital-word', type: 'Auditivo Digital', words: [] },
-                { patterns: visualPatterns, class: 'visual-word', type: 'Visual', words: [] },
-                { patterns: auditoryPatterns, class: 'auditory-word', type: 'Auditivo', words: [] },
-                { patterns: kinestheticPatterns, class: 'kinesthetic-word', type: 'Kinestésico', words: [] }
-            ];
-
-            const highlightedTokens = tokens.map(token => {
-                if (/^\s+$/.test(token) || token === '\n' || token === '<br>') {
-                    return token;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                countdownElement.textContent = formatTime(timeLeft);
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    countdownElement.textContent = "¡Oferta terminada!";
                 }
+            }, 1000);
 
-                let matched = false;
-
-                for (const category of categories) {
-                    for (const pattern of category.patterns) {
-                        if (pattern.test(token)) {
-                            matched = true;
-
-                            // Incrementar el contador correspondiente y almacenar la palabra
-                            if (category.type === 'Visual') {
-                                visualCount++;
-                                category.words.push(token);
-                            }
-                            if (category.type === 'Auditivo') {
-                                auditoryCount++;
-                                category.words.push(token);
-                            }
-                            if (category.type === 'Kinestésico') {
-                                kinestheticCount++;
-                                category.words.push(token);
-                            }
-                            if (category.type === 'Auditivo Digital') {
-                                auditoryDigitalCount++;
-                                category.words.push(token);
-                            }
-
-                            return `<span class="highlight ${category.class}" data-tooltip="${category.type}: ${token}">${token}</span>`;
-                        }
-                    }
-                    if (matched) break;
-                }
-
-                return token;
-            });
-
-            const highlighted = highlightedTokens.join('');
-
-            return {
-                highlighted,
-                visualCount,
-                auditoryCount,
-                kinestheticCount,
-                auditoryDigitalCount,
-                visualWords: categories[1].words,
-                auditoryWords: categories[2].words,
-                kinestheticWords: categories[3].words,
-                auditoryDigitalWords: categories[0].words
-            };
-        }
-
-        function updateStats() {
-            document.getElementById('texts-analyzed').textContent = userStats.textsAnalyzed;
-            document.getElementById('visual-count').textContent = userStats.visualCount;
-            document.getElementById('auditory-count').textContent = userStats.auditoryCount;
-            document.getElementById('kinesthetic-count').textContent = userStats.kinestheticCount;
-            document.getElementById('auditory-digital-count').textContent = userStats.auditoryDigitalCount;
-
-            // Actualizar también en el modal
-            document.getElementById('visual-count-modal').textContent = userStats.visualCount;
-            document.getElementById('auditory-count-modal').textContent = userStats.auditoryCount;
-            document.getElementById('kinesthetic-count-modal').textContent = userStats.kinestheticCount;
-            document.getElementById('auditory-digital-count-modal').textContent = userStats.auditoryDigitalCount;
-        }
-
-        function exportResults() {
-            const analyzedText = document.getElementById('analysis-result').innerText;
-            const sequence = document.getElementById('sequence-result').textContent;
-            const entities = document.getElementById('entity-result').innerText;
-            const vakWords = document.querySelector('.vak-words-section').innerText;
-            const content = `Texto Analizado:\n${analyzedText}\n\n${sequence}\n\nEntidades:\n${entities}\n\nPalabras VAK:\n${vakWords}`;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'resultado_vak.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const toggleButton = document.getElementById('toggle-theme');
-            if (document.body.classList.contains('dark-mode')) {
-                toggleButton.innerText = '☀️ Modo Claro';
-                toggleButton.setAttribute('aria-label', 'Alternar modo claro');
-            } else {
-                toggleButton.innerText = '🌙 Modo Oscuro';
-                toggleButton.setAttribute('aria-label', 'Alternar modo oscuro');
-            }
-        }
-
-        // Función para mostrar estadísticas
-        function showStats() {
-            showModal('stats-modal');
-        }
-
-        function showModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.style.display = 'block';
-            modal.setAttribute('aria-hidden', 'false');
-            // Enfocar el modal para accesibilidad
-            modal.querySelector('.modal-content').focus();
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            modal.style.display = 'none';
-            modal.setAttribute('aria-hidden', 'true');
-        }
-
-        // Cerrar modales al hacer clic en el botón de cerrar
-        document.querySelectorAll('.close').forEach(closeBtn => {
-            closeBtn.addEventListener('click', function () {
-                const modal = this.closest('.modal');
-                closeModal(modal.id);
-            });
-        });
-
-        // Cerrar modales si el usuario hace clic fuera de ellos
-        window.addEventListener('click', function (event) {
-            document.querySelectorAll('.modal').forEach(modal => {
-                if (event.target === modal) {
-                    closeModal(modal.id);
-                }
-            });
-        });
-
-        // Detectar preferencia de color del sistema y ajustar automáticamente
-        function detectColorScheme() {
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.classList.add('dark-mode');
-                document.getElementById('toggle-theme').innerText = '☀️ Modo Claro';
-                document.getElementById('toggle-theme').setAttribute('aria-label', 'Alternar modo claro');
-            }
-        }
-
-        window.addEventListener('load', () => {
-            detectColorScheme();
-        });
-
-        // Función para mostrar listas de palabras VAK detectadas
-        function displayVAKWords(analysis) {
-            const vakWordsSection = document.querySelector('.vak-words-section');
-            vakWordsSection.innerHTML = ''; // Limpiar contenido previo
-
-            const categories = [
-                { type: 'Visual', words: analysis.visualWords },
-                { type: 'Auditivo', words: analysis.auditoryWords },
-                { type: 'Kinestésico', words: analysis.kinestheticWords },
-                { type: 'Auditivo Digital', words: analysis.auditoryDigitalWords }
-            ];
-
-            categories.forEach(category => {
-                const categoryDiv = document.createElement('div');
-                categoryDiv.classList.add('vak-category');
-
-                const title = document.createElement('h3');
-                title.textContent = `Palabras ${category.type}`;
-                categoryDiv.appendChild(title);
-
-                const wordList = document.createElement('p');
-                wordList.textContent = category.words.join(', ') || 'Ninguna';
-                categoryDiv.appendChild(wordList);
-
-                vakWordsSection.appendChild(categoryDiv);
-            });
-        }
-
-        function getSequence(text) {
-            const words = text.toLowerCase().split(/\s+/);
-            const sequence = [];
-            const added = new Set();
-
-            const categories = [
-                { patterns: auditoryDigitalPatterns, symbol: 'AD' },
-                { patterns: visualPatterns, symbol: 'V' },
-                { patterns: auditoryPatterns, symbol: 'A' },
-                { patterns: kinestheticPatterns, symbol: 'K' }
-            ];
-
-            words.forEach(word => {
-                // Eliminar puntuación
-                const cleanWord = word.replace(/[.,!?;:()]+$/g, '').toLowerCase();
-                for (const category of categories) {
-                    for (const pattern of category.patterns) {
-                        if (pattern.test(cleanWord) && !added.has(category.symbol)) {
-                            sequence.push(category.symbol);
-                            added.add(category.symbol);
-                            break;
-                        }
-                    }
-                }
-            });
-
-            return sequence;
-        }
-
-        function updateChart(analysis) {
-            const ctx = document.getElementById('vakChart').getContext('2d');
-            const data = {
-                labels: ['Visual', 'Auditivo', 'Kinestésico', 'Auditivo Digital'],
-                datasets: [{
-                    label: 'Palabras VAK',
-                    data: [analysis.visualCount, analysis.auditoryCount, analysis.kinestheticCount, analysis.auditoryDigitalCount],
-                    backgroundColor: [
-                        'rgba(0, 64, 255, 0.6)',
-                        'rgba(161, 3, 3, 0.6)',
-                        'rgba(1, 117, 100, 0.6)',
-                        'rgba(255, 140, 0, 0.6)'
-                    ],
-                    borderColor: [
-                        'rgba(0, 64, 255, 1)',
-                        'rgba(161, 3, 3, 1)',
-                        'rgba(1, 117, 100, 1)',
-                        'rgba(255, 140, 0, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            };
-
-            if (window.vakChart) {
-                window.vakChart.data.datasets[0].data = data.datasets[0].data;
-                window.vakChart.update();
-            } else {
-                window.vakChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: data,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Cantidad de Palabras'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Categorías VAK'
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                enabled: true,
-                                mode: 'index',
-                                intersect: false
-                            }
-                        },
-                        interaction: {
-                            mode: 'nearest',
-                            axis: 'x',
-                            intersect: false
-                        }
+            // Lazy Loading for images and iframes
+            const lazyElements = document.querySelectorAll('img[data-src], iframe[data-src]');
+            const lazyObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        element.src = element.dataset.src;
+                        lazyObserver.unobserve(element);
                     }
                 });
-            }
-        }
-
-        // Integración con la API de TextRazor
-        async function analyzeWithTextRazor(text) {
-            try {
-                // Reemplaza con la URL correcta de tu función serverless
-                const response = await fetch('/.netlify/functions/textrazor', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ text })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Error en la respuesta del servidor');
-                }
-
-                const data = await response.json();
-
-                // Procesar y mostrar los resultados adicionales
-                processTextRazorData(data);
-
-            } catch (error) {
-                console.error('Error al comunicarse con la función serverless:', error);
-                alert('Ocurrió un error al analizar el texto con TextRazor.');
-            }
-        }
-
-        function processTextRazorData(data) {
-            if (!data.response) {
-                alert('No se obtuvieron resultados de TextRazor.');
-                return;
-            }
-
-            // Mostrar entidades nombradas sin resaltar en el texto
-            const entities = data.response.entities || [];
-            const uniqueEntities = new Set();
-            entities.forEach(entity => {
-                uniqueEntities.add(entity.matchedText);
+            });
+            lazyElements.forEach(element => {
+                lazyObserver.observe(element);
             });
 
-            const entityResult = Array.from(uniqueEntities).join(', ');
-            document.getElementById('entity-result').textContent = `Entidades: ${entityResult}`;
-
-            // Opcional: Mostrar temas principales
-            const topics = data.response.topics || [];
-            const topTopics = topics.slice(0, 5).map(topic => topic.label).join(', ');
-            if (topTopics) {
-                const topicElement = document.createElement('p');
-                topicElement.textContent = `Temas Principales: ${topTopics}`;
-                document.querySelector('.entity-analysis').appendChild(topicElement);
-            }
-        }
-
-        // Indicador de Carga
-        function showLoading(show) {
-            const loadingOverlay = document.getElementById('loading-overlay');
-            if (show) {
-                loadingOverlay.style.display = 'flex';
-                loadingOverlay.setAttribute('aria-hidden', 'false');
-            } else {
-                loadingOverlay.style.display = 'none';
-                loadingOverlay.setAttribute('aria-hidden', 'true');
-            }
-        }
-
-        // Event Listeners
-        document.getElementById('analyze-btn').addEventListener('click', analyzeText);
-        document.getElementById('export-results').addEventListener('click', exportResults);
-        document.getElementById('toggle-theme').addEventListener('click', toggleDarkMode);
-        document.getElementById('show-info').addEventListener('click', function () {
-            showModal('info-modal');
-        });
-        document.getElementById('show-stats').addEventListener('click', showStats);
-
-        // Accesibilidad Mejorada: Navegación con teclado
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                document.querySelectorAll('.modal').forEach(modal => {
-                    if (modal.style.display === 'block') {
-                        closeModal(modal.id);
+            // Scroll Fade-in Animation for sections/containers
+            const animatedElements = document.querySelectorAll('.container, .section');
+            const animationObserver = new IntersectionObserver(entries => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        animationObserver.unobserve(entry.target);
                     }
                 });
-            }
+            }, { threshold: 0.1 }); // Trigger when 10% of the element is visible
+
+            animatedElements.forEach(element => {
+                animationObserver.observe(element);
+            });
         });
-	</script>
+    </script>
 </body>
-
 </html>
